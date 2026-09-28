@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <title>Kpler Vessel Ownership</title>
+  <link rel="stylesheet" href="taskpane.css" />
+  <script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Kpler Vessel Ownership &amp; Particulars</h1>
+  </header>
+
+  <main>
+    <section id="settings-section">
+      <details id="settings-details">
+        <summary>Connection settings</summary>
+        <label for="endpoint-input">GraphQL endpoint URL</label>
+        <input type="text" id="endpoint-input" placeholder="https://api.example-kpler-endpoint.com/graphql" />
+
+        <label for="apikey-input">API key</label>
+        <input type="password" id="apikey-input" placeholder="Paste your Kpler API key" />
+
+        <label for="auth-scheme-select">Auth header</label>
+        <select id="auth-scheme-select">
+          <option value="Bearer">Authorization: Bearer &lt;key&gt;</option>
+          <option value="Raw">Authorization: &lt;key&gt;</option>
+          <option value="ApiKey">x-api-key: &lt;key&gt;</option>
+        </select>
+
+        <button id="save-settings-btn" class="secondary-btn">Save settings</button>
+        <p class="hint">Saved only in this browser (localStorage), never written into the workbook.</p>
+      </details>
+    </section>
+
+    <section id="input-section">
+      <label for="imo-input">Vessel IMO numbers (one per line, or comma/space separated)</label>
+      <textarea id="imo-input" rows="6" placeholder="9389679
+9412036, 9500307"></textarea>
+
+      <label for="sheet-name-input">Output sheet name</label>
+      <input type="text" id="sheet-name-input" value="Vessel Data" />
+
+      <button id="fetch-btn" class="primary-btn">Fetch &amp; write to sheet</button>
+    </section>
+
+    <section id="status-section">
+      <p id="status-text"></p>
+      <progress id="progress-bar" max="100" value="0" style="display:none;"></progress>
+    </section>
+
+    <section id="log-section">
+      <ul id="log-list"></ul>
+    </section>
+  </main>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>
