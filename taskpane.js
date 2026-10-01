@@ -4,6 +4,7 @@ const STORAGE_KEYS = {
   endpoint: "kplerVesselAddin.endpoint",
   apiKey: "kplerVesselAddin.apiKey",
   authScheme: "kplerVesselAddin.authScheme",
+  username: "kplerVesselAddin.username",
 };
 
 const BATCH_SIZE = 250; // IMOs per GraphQL request (well under the 1000 "first" cap)
@@ -15,6 +16,8 @@ Office.onReady(() => {
     endpoint: document.getElementById("endpoint-input"),
     apiKey: document.getElementById("apikey-input"),
     authScheme: document.getElementById("auth-scheme-select"),
+    username: document.getElementById("username-input"),
+    usernameLabel: document.getElementById("username-label"),
     saveSettingsBtn: document.getElementById("save-settings-btn"),
     settingsDetails: document.getElementById("settings-details"),
     imoInput: document.getElementById("imo-input"),
@@ -26,8 +29,10 @@ Office.onReady(() => {
   };
 
   loadSettings();
+  toggleUsernameField();
   els.saveSettingsBtn.addEventListener("click", saveSettings);
   els.fetchBtn.addEventListener("click", onFetchClick);
+  els.authScheme.addEventListener("change", toggleUsernameField);
 
   // Open the settings panel automatically if nothing is configured yet
   if (!els.endpoint.value) {
@@ -38,15 +43,23 @@ Office.onReady(() => {
 function loadSettings() {
   els.endpoint.value = localStorage.getItem(STORAGE_KEYS.endpoint) || "";
   els.apiKey.value = localStorage.getItem(STORAGE_KEYS.apiKey) || "";
-  els.authScheme.value = localStorage.getItem(STORAGE_KEYS.authScheme) || "Bearer";
+  els.authScheme.value = localStorage.getItem(STORAGE_KEYS.authScheme) || "Basic";
+  els.username.value = localStorage.getItem(STORAGE_KEYS.username) || "";
 }
 
 function saveSettings() {
   localStorage.setItem(STORAGE_KEYS.endpoint, els.endpoint.value.trim());
   localStorage.setItem(STORAGE_KEYS.apiKey, els.apiKey.value.trim());
   localStorage.setItem(STORAGE_KEYS.authScheme, els.authScheme.value);
+  localStorage.setItem(STORAGE_KEYS.username, els.username.value.trim());
   setStatus("Settings saved in this browser.", "success");
   els.settingsDetails.removeAttribute("open");
+}
+
+function toggleUsernameField() {
+  const show = els.authScheme.value === "Basic";
+  els.username.style.display = show ? "" : "none";
+  els.usernameLabel.style.display = show ? "" : "none";
 }
 
 function setStatus(msg, kind) {
@@ -65,7 +78,10 @@ function buildAuthHeaders() {
   const scheme = els.authScheme.value;
   const headers = { "Content-Type": "application/json" };
   if (!key) return headers;
-  if (scheme === "Bearer") headers["Authorization"] = `Bearer ${key}`;
+  if (scheme === "Basic") {
+    const user = els.username.value.trim();
+    headers["Authorization"] = `Basic ${btoa(`${user}:${key}`)}`;
+  } else if (scheme === "Bearer") headers["Authorization"] = `Bearer ${key}`;
   else if (scheme === "Raw") headers["Authorization"] = key;
   else if (scheme === "ApiKey") headers["x-api-key"] = key;
   return headers;

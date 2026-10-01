@@ -19,15 +19,19 @@
         <label for="endpoint-input">GraphQL endpoint URL</label>
         <input type="text" id="endpoint-input" placeholder="https://api.example-kpler-endpoint.com/graphql" />
 
-        <label for="apikey-input">API key</label>
-        <input type="password" id="apikey-input" placeholder="Paste your Kpler API key" />
-
         <label for="auth-scheme-select">Auth header</label>
         <select id="auth-scheme-select">
+          <option value="Basic">Authorization: Basic &lt;base64(user:key)&gt;</option>
           <option value="Bearer">Authorization: Bearer &lt;key&gt;</option>
           <option value="Raw">Authorization: &lt;key&gt;</option>
           <option value="ApiKey">x-api-key: &lt;key&gt;</option>
         </select>
+
+        <label for="username-input" id="username-label">Username</label>
+        <input type="text" id="username-input" placeholder="Basic auth username" />
+
+        <label for="apikey-input" id="apikey-label">API key</label>
+        <input type="password" id="apikey-input" placeholder="Paste your Kpler API key" />
 
         <button id="save-settings-btn" class="secondary-btn">Save settings</button>
         <p class="hint">Saved only in this browser (localStorage), never written into the workbook.</p>

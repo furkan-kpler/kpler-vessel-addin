@@ -30,9 +30,11 @@ will spell out precisely. Two things to confirm before handing this off:
    pane's "Connection settings" panel (see below) — no code change needed. If you'd
    rather it be pre-filled, set a default in `taskpane.js` at the top of
    `loadSettings()`.
-2. **The auth header shape.** The task pane has a dropdown for `Authorization: Bearer
-   <key>`, `Authorization: <key>` (raw), or `x-api-key: <key>`. Confirm which one the
-   customer's Kpler contract uses and tell them which to pick (or hardcode it in
+2. **The auth header shape.** The task pane defaults to **Basic** auth
+   (`Authorization: Basic base64(username:key)`, with a Username field that only
+   shows when Basic is selected) and also offers `Bearer <key>`, raw
+   `Authorization: <key>`, and `x-api-key: <key>`. Confirm which one the customer's
+   Kpler contract uses and tell them which to pick (or hardcode it in
    `buildAuthHeaders()` in `taskpane.js` if it's always the same for every customer).
 
 Also worth a quick check: if the endpoint enforces CORS restrictions on browser-origin
