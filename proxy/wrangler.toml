@@ -1,0 +1,8 @@
+name = "kpler-vessel-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# The real Kpler GraphQL endpoint the worker forwards to. Override here if it
+# ever changes, or set per-environment below.
+[vars]
+KPLER_ENDPOINT = "https://api.kpler.com/v2/maritime/vessels/graphql"

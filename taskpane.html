@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <title>Kpler Vessel Ownership</title>
+  <link rel="stylesheet" href="taskpane.css" />
+  <script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Kpler Vessel Ownership &amp; Particulars</h1>
+  </header>
+
+  <main>
+    <section id="settings-section">
+      <details id="settings-details">
+        <summary>Connection settings</summary>
+        <label for="endpoint-input">Proxy URL (see proxy/README.md - do not point this at Kpler directly, the browser's CORS policy will block it)</label>
+        <input type="text" id="endpoint-input" placeholder="https://kpler-vessel-proxy.YOUR-SUBDOMAIN.workers.dev" />
+
+        <label for="auth-scheme-select">Auth header</label>
+        <select id="auth-scheme-select">
+          <option value="Basic">Authorization: Basic &lt;token&gt;</option>
+          <option value="Bearer">Authorization: Bearer &lt;key&gt;</option>
+          <option value="Raw">Authorization: &lt;key&gt;</option>
+          <option value="ApiKey">x-api-key: &lt;key&gt;</option>
+        </select>
+
+        <label for="apikey-input" id="apikey-label">API key / token</label>
+        <input type="password" id="apikey-input" placeholder="Paste your Kpler token exactly as given to you" />
+
+        <button id="save-settings-btn" class="secondary-btn">Save settings</button>
+        <p class="hint">Saved only in this browser (localStorage), never written into the workbook.</p>
+      </details>
+    </section>
+
+    <section id="input-section">
+      <label for="imo-input">Vessel IMO numbers (one per line, or comma/space separated)</label>
+      <textarea id="imo-input" rows="6" placeholder="9389679
+9412036, 9500307"></textarea>
+
+      <label for="sheet-name-input">Output sheet name</label>
+      <input type="text" id="sheet-name-input" value="Vessel Data" />
+
+      <button id="fetch-btn" class="primary-btn">Fetch &amp; write to sheet</button>
+    </section>
+
+    <section id="status-section">
+      <p id="status-text"></p>
+      <progress id="progress-bar" max="100" value="0" style="display:none;"></progress>
+    </section>
+
+    <section id="log-section">
+      <ul id="log-list"></ul>
+    </section>
+  </main>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>
