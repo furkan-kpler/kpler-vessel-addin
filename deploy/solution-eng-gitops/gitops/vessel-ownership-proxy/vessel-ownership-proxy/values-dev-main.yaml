@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://kp-helmchart-stable-shared-main.s3.eu-west-1.amazonaws.com/schema/platform-managed-chart/v0.1.172/schema-platform-managed-chart.json
+platform-managed-chart:
+  image:
+    # TODO(team): pin the tag CI built for dev
+    tag: v0.1.0
+  # api:
+  #   # TODO(team): who may call this service inside the cluster (see authorizedSources in trades-snapshots)
+  #   authorizedSources:
+  #     - "TODO"

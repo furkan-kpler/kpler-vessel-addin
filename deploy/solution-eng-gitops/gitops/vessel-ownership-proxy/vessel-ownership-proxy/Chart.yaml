@@ -1,0 +1,12 @@
+apiVersion: v2
+name: vessel-ownership-proxy
+description: A Helm chart using the platform-managed-chart
+
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+
+dependencies:
+  - name: platform-managed-chart
+    version: 0.1.172
+    repository: https://kp-helmchart-stable-shared-main.s3.eu-west-1.amazonaws.com/charts

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://kp-helmchart-stable-shared-main.s3.eu-west-1.amazonaws.com/schema/platform-managed-chart/v0.1.172/schema-platform-managed-chart.json
+
+platform-managed-chart:
+  env: dev
+
+  api:
+    replicas: 1
+    resources:
+      cpu: 250m
+      memory: 256Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
+    env:
+      # TODO(team): the add-in origin(s) allowed to call the proxy from a browser.
+      ALLOWED_ORIGINS:
+        value: "https://furkan-kpler.github.io"

@@ -1,0 +1,15 @@
+{
+  "name": "kpler-vessel-proxy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CORS pass-through proxy for the Kpler vessel ownership GraphQL API",
+  "main": "server.js",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/"
+  }
+}

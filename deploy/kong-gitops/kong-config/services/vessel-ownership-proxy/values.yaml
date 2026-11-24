@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schemas/kong-service-partial-schema.json
+
+# No cors plugin here on purpose: proxy-k8s answers CORS itself, and a second
+# Access-Control-Allow-Origin header from Kong makes browsers reject the response.
+# No auth plugin either: the caller's own Kpler token is validated by the upstream API.
+service:
+  name: vessel-ownership-proxy
+  port: 443
+  protocol: https
+routes:
+  - name: vessel-ownership-proxy
+    paths:
+      - /vessel-ownership-proxy
+    stripPath: true

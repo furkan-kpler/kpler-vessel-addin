@@ -1,0 +1,4 @@
+resourceQuota:
+  pods: 4
+  cpu: 2
+  memory: 4Gi

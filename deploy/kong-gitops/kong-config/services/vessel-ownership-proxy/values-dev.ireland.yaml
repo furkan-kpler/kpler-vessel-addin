@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schemas/kong-service-partial-schema.json
+
+service:
+  defaultK8sIngressUrl: vessel-ownership-proxy.dev.galil.io
+routes:
+  - name: vessel-ownership-proxy
+    externalHostUrls:
+      - internal-api.dev.galil.io

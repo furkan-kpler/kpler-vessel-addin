@@ -55,3 +55,15 @@ owner(s), beneficial owner, registered owner), commercial (disponent owner,
 commercial operator), management (technical manager, ISM manager), associated
 companies (ship builder, engine builder, classification society, P&I club), and
 historical vessel names.
+
+## Deployment (Kubernetes + Kong)
+
+The browser cannot call `api.kpler.com` directly (no CORS header on its preflight), so a small
+pass-through proxy sits between the add-in and Kpler.
+
+- `proxy-k8s/`: the containerized Node proxy (no npm dependencies). Build and test instructions are in [proxy-k8s/README.md](proxy-k8s/README.md).
+- `deploy/solution-eng-gitops/`: Helm values in the layout of `Kpler/solution-eng-gitops`. Copy `gitops/vessel-ownership-proxy/` into that repo.
+- `deploy/kong-gitops/`: Kong service config in the layout of `Kpler/kong-gitops`. Copy `kong-config/services/vessel-ownership-proxy/` into that repo.
+
+Open decisions (tracked as `TODO(team)` in the files): exposure type, the production hostname,
+the allowed add-in origins, `authorizedSources`, and the image registry and tag.

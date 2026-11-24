@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://kp-helmchart-stable-shared-main.s3.eu-west-1.amazonaws.com/schema/platform-managed-chart/v0.1.172/schema-platform-managed-chart.json
+
+platform-managed-chart:
+  serviceName: vessel-ownership-proxy
+  teamOwner: solution-eng
+
+  workloadType: api
+
+  api:
+    # TODO(team): confirm exposure type with crew-data-ecosystem; it decides how the service is reached.
+    exposureType: customerfacing
+    livenessProbe:
+      failureThreshold: 2
+      httpGet:
+        path: /healthz
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+    readinessProbe:
+      failureThreshold: 2
+      httpGet:
+        path: /readyz
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+
+    # Read by proxy-k8s/server.js. The proxy holds no credentials; callers send their own token.
+    env:
+      KPLER_ENDPOINT:
+        value: "https://api.kpler.com/v2/maritime/vessels/graphql"
+      PORT:
+        value: "8080"
+      MAX_BODY_BYTES:
+        value: "1000000"
+      UPSTREAM_TIMEOUT_MS:
+        value: "60000"
+
+  image:
+    repository: stable/vessel-ownership-proxy
+    # TODO(team): replace with the tag CI pushes (see values-*-main.yaml for the pinned tag)
+    tag: v0.1.0
+    port: 8080
