@@ -67,3 +67,31 @@ pass-through proxy sits between the add-in and Kpler.
 
 Open decisions (tracked as `TODO(team)` in the files): exposure type, the production hostname,
 the allowed add-in origins, `authorizedSources`, and the image registry and tag.
+
+## Pilot setup (run locally, desktop Excel)
+
+This runs the whole add-in on your own machine. No deployment is needed. Excel on the web can't load a `localhost` add-in, so this is for desktop Excel only.
+
+Requirements: Node 22 or newer.
+
+1. Install the Office dev certificates once (trust prompt, admin rights may be needed):
+   ```bash
+   npx office-addin-dev-certs install
+   ```
+2. Terminal 1, start the proxy on `http://localhost:8080`:
+   ```bash
+   npm run proxy
+   ```
+3. Terminal 2, serve the add-in on `https://localhost:3000`:
+   ```bash
+   npm run addin
+   ```
+4. In Excel, go to Insert → Add-ins → My Add-ins → Upload My Add-in, and choose `manifest-local.xml` from this folder.
+5. In the task pane's Connection settings:
+   - Proxy URL: `http://localhost:8080`
+   - Auth header: `Basic`
+   - API key / token: your Kpler API key
+
+Use your own key only, never one that belongs to someone else. The proxy only forwards it to Kpler and keeps nothing.
+
+To check the proxy, run `npm run test:proxy`.

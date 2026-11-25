@@ -1,0 +1,15 @@
+{
+  "name": "kpler-vessel-addin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Excel add-in for the Kpler vessel ownership API",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "proxy": "node dev/run-proxy.js",
+    "addin": "node dev/serve-addin.js",
+    "test:proxy": "node --test proxy-k8s/test/server.test.js"
+  }
+}

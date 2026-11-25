@@ -22,7 +22,9 @@
 
 "use strict";
 
+const fs = require("node:fs");
 const http = require("node:http");
+const https = require("node:https");
 const { URL } = require("node:url");
 
 const DEFAULTS = {
@@ -49,6 +51,11 @@ function configFromEnv(env = process.env) {
       .filter(Boolean),
     maxBodyBytes: Number(env.MAX_BODY_BYTES || DEFAULTS.maxBodyBytes),
     upstreamTimeoutMs: Number(env.UPSTREAM_TIMEOUT_MS || DEFAULTS.upstreamTimeoutMs),
+    // Optional TLS, so an https add-in page can call a localhost proxy without mixed-content blocking.
+    tls:
+      env.TLS_KEY_FILE && env.TLS_CERT_FILE
+        ? { key: fs.readFileSync(env.TLS_KEY_FILE), cert: fs.readFileSync(env.TLS_CERT_FILE) }
+        : null,
   };
 }
 
@@ -108,7 +115,7 @@ function readBody(req, maxBytes) {
 function createProxyServer(config) {
   const cfg = { ...DEFAULTS, ...config };
 
-  return http.createServer(async (req, res) => {
+  const handler = async (req, res) => {
     const started = Date.now();
     const origin = req.headers.origin;
     const path = new URL(req.url, "http://localhost").pathname;
@@ -127,7 +134,12 @@ function createProxyServer(config) {
     }
 
     if (req.method === "OPTIONS") {
-      res.writeHead(204, cors || {});
+      // Chromium asks before a public page (the GitHub Pages add-in) calls a local address.
+      const preflightHeaders = { ...(cors || {}) };
+      if (req.headers["access-control-request-private-network"] === "true") {
+        preflightHeaders["Access-Control-Allow-Private-Network"] = "true";
+      }
+      res.writeHead(204, preflightHeaders);
       res.end();
       log(req, 204, started);
       return;
@@ -171,7 +183,8 @@ function createProxyServer(config) {
     res.writeHead(upstreamRes.status, { "Content-Type": contentType, ...(cors || {}) });
     res.end(text);
     log(req, upstreamRes.status, started);
-  });
+  };
+  return cfg.tls ? https.createServer(cfg.tls, handler) : http.createServer(handler);
 }
 
 /** One structured log line per request. Never logs headers or bodies. */
@@ -193,7 +206,13 @@ if (require.main === module) {
   const config = configFromEnv();
   const server = createProxyServer(config);
   server.listen(config.port, () => {
-    console.log(JSON.stringify({ msg: "listening", port: config.port, upstream: config.upstream }));
+    console.log(
+      JSON.stringify({
+        msg: "listening",
+        url: `${config.tls ? "https" : "http"}://localhost:${config.port}`,
+        upstream: config.upstream,
+      })
+    );
   });
   const shutdown = () => server.close(() => process.exit(0));
   process.on("SIGTERM", shutdown);

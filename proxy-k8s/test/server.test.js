@@ -55,6 +55,18 @@ test("preflight from an allowed origin returns CORS headers", async () => {
   assert.match(res.headers.get("access-control-allow-headers"), /Authorization/);
 });
 
+test("preflight with Private Network Access request gets the allow header", async () => {
+  const res = await fetch(proxyUrl + "/", {
+    method: "OPTIONS",
+    headers: {
+      Origin: ALLOWED,
+      "Access-Control-Request-Private-Network": "true",
+    },
+  });
+  assert.equal(res.status, 204);
+  assert.equal(res.headers.get("access-control-allow-private-network"), "true");
+});
+
 test("request from a disallowed origin is refused with 403", async () => {
   const res = await fetch(proxyUrl + "/", {
     method: "POST",

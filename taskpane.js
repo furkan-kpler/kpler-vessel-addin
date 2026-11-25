@@ -89,9 +89,16 @@ function chunk(arr, size) {
   return out;
 }
 
-const GRAPHQL_QUERY = `
-query VesselLookup($imos: [String!]!, $after: String) {
-  vessels(first: 1000, after: $after, where: { filters: [{ field: "identifier.imo", op: IN, values: $imos }] }) {
+// IMO numbers are written into the query text (not sent as variables): the API rejects the
+// variable form with "filter values are invalid", and the example query uses inline values.
+function buildVesselQuery(imos) {
+  for (const imo of imos) {
+    if (!/^\d{7}$/.test(String(imo))) throw new Error(`Invalid IMO number: ${imo}`);
+  }
+  const values = imos.map((imo) => `"${String(imo)}"`).join(", ");
+  return `
+query VesselLookup($after: String) {
+  vessels(first: 1000, after: $after, where: { filters: { field: "identifier.imo", op: IN, values: [${values}] } }) {
     nodes {
       identifier { imo mmsi callSign eni shipId }
       particulars {
@@ -128,12 +135,13 @@ query VesselLookup($imos: [String!]!, $after: String) {
     pageInfo { hasNextPage endCursor }
   }
 }`;
+}
 
 async function fetchBatch(imos, after) {
   const res = await fetch(els.endpoint.value.trim(), {
     method: "POST",
     headers: buildAuthHeaders(),
-    body: JSON.stringify({ query: GRAPHQL_QUERY, variables: { imos, after: after || null } }),
+    body: JSON.stringify({ query: buildVesselQuery(imos), variables: { after: after || null } }),
   });
 
   if (!res.ok) {
