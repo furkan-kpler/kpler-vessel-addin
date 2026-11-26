@@ -45,6 +45,8 @@ function configFromEnv(env = process.env) {
   return {
     upstream,
     port: Number(env.PORT || DEFAULTS.port),
+    // Unset binds all interfaces (right for a container). Set HOST=127.0.0.1 to listen on this machine only.
+    host: env.HOST || undefined,
     allowedOrigins: (env.ALLOWED_ORIGINS || "")
       .split(",")
       .map((s) => s.trim())
@@ -205,7 +207,8 @@ module.exports = { configFromEnv, createProxyServer, corsHeadersFor };
 if (require.main === module) {
   const config = configFromEnv();
   const server = createProxyServer(config);
-  server.listen(config.port, () => {
+  const listenArgs = config.host ? [config.port, config.host] : [config.port];
+  server.listen(...listenArgs, () => {
     console.log(
       JSON.stringify({
         msg: "listening",

@@ -18,6 +18,8 @@ const useTls = fs.existsSync(keyFile) && fs.existsSync(certFile) && process.env.
 const env = {
   ...process.env,
   PORT: process.env.PORT || "8080",
+  // Local pilot: listen on this machine only, so nothing else on the network can reach the proxy.
+  HOST: process.env.HOST || "127.0.0.1",
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || "https://furkan-kpler.github.io,https://localhost:3000",
   ...(useTls ? { TLS_KEY_FILE: keyFile, TLS_CERT_FILE: certFile } : {}),
 };
